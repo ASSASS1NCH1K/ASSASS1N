@@ -1,0 +1,470 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Автомобильный дилерский центр</title>
+    <style>
+        /* Общие стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Шапка */
+        header {
+            background: linear-gradient(135deg, #1a2a6c, #2a4b8d);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: #ffcc00;
+        }
+        
+        /* Основной контент */
+        main {
+            padding: 2rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #1a2a6c;
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: #ffcc00;
+            margin: 10px auto;
+        }
+        
+        /* Секция автомобилей */
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .car-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .car-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .car-image {
+            height: 200px;
+            background-color: #e9e9e9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .car-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .car-card:hover .car-image img {
+            transform: scale(1.05);
+        }
+        
+        .car-details {
+            padding: 1.5rem;
+        }
+        
+        .car-brand {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #1a2a6c;
+        }
+        
+        .car-model {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .car-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2a4b8d;
+            margin: 1rem 0;
+        }
+        
+        .car-features {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            color: #666;
+        }
+        
+        /* Секция дилеров */.dealers-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .dealer-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .dealer-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #1a2a6c;
+        }
+        
+        /* Секция клиентов */
+        .clients-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .client-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .client-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #1a2a6c;
+        }
+        
+        /* Секция продаж */
+        .sales-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 3rem;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .sales-table th, .sales-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .sales-table th {
+            background-color: #1a2a6c;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .sales-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .sales-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        /* Подвал */
+        footer {
+            background: #1a2a6c;
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            margin: 1rem 0;
+        }
+        
+        .footer-links a {
+            color: white;
+            margin: 0 1rem;
+            text-decoration: none;
+        }
+        
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0.5rem;
+            }
+            
+            .cars-grid, .dealers-list, .clients-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .sales-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка сайта -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">АвтоДилер</div>
+            <nav>
+                <ul>
+                    <li><a href="#cars">Автомобили</a></li>
+                    <li><a href="#dealers">Дилеры</a></li>
+                    <li><a href="#clients">Клиенты</a></li>
+                    <li><a href="#sales">Продажи</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header><!-- Основной контент -->
+    <main class="container">
+        <!-- Секция автомобилей -->
+        <section id="cars">
+            <h2 class="section-title">Наши автомобили</h2>
+            <div class="cars-grid">
+                <div class="car-card">
+                    <div class="car-image">
+                        <img src="{% static "1200x900.webp" %}" alt="Toyota Camry">
+                    </div>
+                    <div class="car-details">
+                        <div class="car-brand">Toyota</div>
+                        <div class="car-model">Camry</div>
+                        <div class="car-features">
+                            <span>2022 год</span>
+                            <span>Черный</span>
+                        </div>
+                        <div class="car-price">2 500 000 руб.</div>
+                    </div>
+                </div>
+                
+                <div class="car-card">
+                    <div class="car-image">
+                        <img src="C:\Users\is\Desktop\GGG2\ASSASSIN\GGG_APP\templates\i.webp" alt="BMW X5">
+                    </div>
+                    <div class="car-details">
+                        <div class="car-brand">BMW</div>
+                        <div class="car-model">X5</div>
+                        <div class="car-features">
+                            <span>2021 год</span>
+                            <span>Белый</span>
+                        </div>
+                        <div class="car-price">4 800 000 руб.</div>
+                    </div>
+                </div>
+                
+                <div class="car-card">
+                    <div class="car-image">
+                        <img src="C:\Users\is\Desktop\GGG2\ASSASSIN\GGG_APP\templates\gen580_1207605649.jpg" alt="Mercedes-Benz E-Class">
+                    </div>
+                    <div class="car-details">
+                        <div class="car-brand">Mercedes-Benz</div>
+                        <div class="car-model">E-Class</div>
+                        <div class="car-features">
+                            <span>2023 год</span>
+                            <span>Серый</span>
+                        </div>
+                        <div class="car-price">5 200 000 руб.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Секция дилеров -->
+        <section id="dealers">
+            <h2 class="section-title">Наши дилеры</h2>
+            <div class="dealers-list">
+                <div class="dealer-card">
+                    <div class="dealer-name">Иван Петров</div>
+                    <div class="dealer-phone">+7 (999) 123-45-67</div>
+                    <div class="dealer-email">ivan.petrov@example.com</div>
+                </div>
+                
+                <div class="dealer-card">
+                    <div class="dealer-name">Мария Сидорова</div>
+                    <div class="dealer-phone">+7 (999) 765-43-21</div>
+                    <div class="dealer-email">maria.sidorova@example.com</div>
+                </div>
+                
+                <div class="dealer-card">
+                    <div class="dealer-name">Алексей Козлов</div>
+                    <div class="dealer-phone">+7 (999) 555-44-33</div>
+                    <div class="dealer-email">alexey.kozlov@example.com</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Секция клиентов -->
+        <section id="clients"><h2 class="section-title">Наши клиенты</h2>
+            <div class="clients-list">
+                <div class="client-card">
+                    <div class="client-name">Сергей Иванов</div>
+                    <div class="client-phone">+7 (999) 111-22-33</div>
+                    <div class="client-email">sergey.ivanov@example.com</div>
+                    <div class="client-address">г. Москва, ул. Ленина, д. 10</div>
+                </div>
+                
+                <div class="client-card">
+                    <div class="client-name">Ольга Николаева</div>
+                    <div class="client-phone">+7 (999) 444-55-66</div>
+                    <div class="client-email">olga.nikolaeva@example.com</div>
+                    <div class="client-address">г. Санкт-Петербург, Невский пр., д. 25</div>
+                </div>
+                
+                <div class="client-card">
+                    <div class="client-name">Дмитрий Смирнов</div>
+                    <div class="client-phone">+7 (999) 777-88-99</div>
+                    <div class="client-email">dmitry.smirnov@example.com</div>
+                    <div class="client-address">г. Екатеринбург, ул. Мира, д. 15</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Секция продаж -->
+        <section id="sales">
+            <h2 class="section-title">История продаж</h2>
+            <table class="sales-table">
+                <thead>
+                    <tr>
+                        <th>Автомобиль</th>
+                        <th>Клиент</th>
+                        <th>Дилер</th>
+                        <th>Сумма продажи</th>
+                        <th>Дата продажи</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Toyota Camry</td>
+                        <td>Сергей Иванов</td>
+                        <td>Иван Петров</td>
+                        <td>2 500 000 руб.</td>
+                        <td>15.05.2023</td>
+                    </tr>
+                    <tr>
+                        <td>BMW X5</td>
+                        <td>Ольга Николаева</td>
+                        <td>Мария Сидорова</td>
+                        <td>4 800 000 руб.</td>
+                        <td>22.06.2023</td>
+                    </tr>
+                    <tr>
+                        <td>Mercedes-Benz E-Class</td>
+                        <td>Дмитрий Смирнов</td>
+                        <td>Алексей Козлов</td>
+                        <td>5 200 000 руб.</td>
+                        <td>10.07.2023</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Подвал сайта -->
+    <footer>
+        <div class="container footer-content">
+            <div class="logo">АвтоДилер</div>
+            <div class="footer-links">
+                <a href="#cars">Автомобили</a>
+                <a href="#dealers">Дилеры</a>
+                <a href="#clients">Клиенты</a>
+                <a href="#sales">Продажи</a>
+            </div>
+            <div class="copyright">
+                &copy; 2023 Автомобильный дилерский центр. Все права защищены.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
