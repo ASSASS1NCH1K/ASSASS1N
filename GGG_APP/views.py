@@ -2,6 +2,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
+
 # Главная страница (если нужно)
 def home_view(request):
     return render(request, '1.html')
@@ -102,3 +103,8 @@ def bmw_x5_view(request):
 
 def mercedes_e_class_view(request):
     return car_detail_view(request, 'mercedes-e-class')
+
+def index(request):
+    return HttpResponse("Добро пожаловать на наш сайт!")
+# Create your views here.
+
