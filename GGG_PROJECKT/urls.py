@@ -25,6 +25,7 @@ urlpatterns = [
     path('buy/toyota-camry/', views.toyota_camry_view, name='toyota_camry'),
     path('buy/bmw-x5/', views.bmw_x5_view, name='bmw_x5'),
     path('buy/mercedes-e-class/', views.mercedes_e_class_view, name='mercedes_e_class'),
+
 ]
 
 

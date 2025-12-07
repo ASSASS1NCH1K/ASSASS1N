@@ -101,4 +101,13 @@ def bmw_x5_view(request):
     return car_detail_view(request, 'bmw-x5')
 
 def mercedes_e_class_view(request):
+
     return car_detail_view(request, 'mercedes-e-class')
+
+    return car_detail_view(request, 'mercedes-e-class')
+
+def index(request):
+    return HttpResponse("Добро пожаловать на наш сайт!")
+# Create your views here.
+
+
