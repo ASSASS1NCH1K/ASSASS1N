@@ -7,6 +7,7 @@
     <title>Автомобильный дилерский центр</title>
     <link rel="stylesheet" href="{% static "1.css" %}">
     <style>
+        /* Стили остаются прежними, только изменим форму поиска */
         .search-container {
             text-align: center;
             margin: 30px 0;
@@ -21,7 +22,7 @@
             margin-bottom: 15px;
         }
         
-        .search-box {
+        .search-form {
             display: flex;
             max-width: 600px;
             margin: 0 auto;
@@ -61,6 +62,24 @@
             opacity: 0.9;
         }
         
+        .search-results-info {
+            margin-top: 15px;
+            font-size: 16px;
+        }
+        
+        .clear-search {
+            display: inline-block;
+            margin-left: 15px;
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .clear-search:hover {
+            text-decoration: underline;
+        }
+        
+        /* Остальные стили остаются прежними */
         .car-card-link {
             text-decoration: none;
             color: inherit;
@@ -152,20 +171,34 @@
             margin-top: 30px;
         }
         
-        .dealers-list {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
         .no-results {
             text-align: center;
             padding: 40px;
             font-size: 18px;
             color: #666;
-            display: none;
+        }
+        
+        .search-filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .filter-button {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-button:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
         }
     </style>
 </head>
@@ -176,10 +209,11 @@
             <div class="logo">АвтоДилер</div>
             <nav>
                 <ul>
-                    <li><a href="#cars">Автомобили</a></li>
-                    <li><a href="#dealers">Дилеры</a></li>
-                    <li><a href="#clients">Клиенты</a></li>
-                    <li><a href="#sales">Продажи</a></li>
+                    <li><a href="{% url 'home' %}">Главная</a></li>
+                    <li><a href="{% url 'home' %}#cars">Автомобили</a></li>
+                    <li><a href="{% url 'home' %}#dealers">Дилеры</a></li>
+                    <li><a href="{% url 'home' %}#clients">Клиенты</a></li>
+                    <li><a href="{% url 'home' %}#sales">Продажи</a></li>
                 </ul>
             </nav>
         </div>
@@ -190,45 +224,61 @@
         <!-- Поисковая строка -->
         <section class="search-container">
             <h2 class="search-title">Найдите свой идеальный автомобиль</h2>
-            <div class="search-box">
+            
+            <!-- Форма поиска Django -->
+            <form method="GET" action="{% url 'home' %}" class="search-form">
                 <input type="text" 
-                       id="carSearch" 
+                       name="q" 
                        class="search-input" 
-                       placeholder="Введите марку или модель автомобиля (Toyota, BMW, Mercedes...)"
-                       onkeyup="searchCars()">
-                <button class="search-button" onclick="searchCars()">Поиск</button>
-            </div>
-            <div class="search-hint">
-                {% if cars %}
-                    Попробуйте: 
-                    {% for car in cars|slice:":3" %}
-                        {{ car.brand }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
+                       placeholder="Введите марку, модель или цвет автомобиля"
+                       value="{{ search_query }}">
+                <button type="submit" class="search-button">Поиск</button>
+            </form>
+            
+            <!-- Информация о результатах поиска -->
+            <div class="search-results-info">
+                {% if search_query %}
+                    Найдено автомобилей: {{ cars|length }}
+                    <a href="{% url 'home' %}" class="clear-search">Очистить поиск</a>
+                {% else %}
+                    Всего автомобилей: {{ cars|length }}
                 {% endif %}
+            </div>
+            
+            <!-- Быстрые фильтры -->
+            <div class="search-filters">
+                {% for brand in brands %}
+                    <a href="{% url 'home' %}?q={{ brand }}" class="filter-button">{{ brand }}</a>
+                {% endfor %}
+            </div>
+            
+            <div class="search-hint">
+                Попробуйте: 
+                {% for car in cars|slice:":3" %}
+                    {{ car.brand }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
             </div>
         </section>
 
         <!-- Секция автомобилей -->
         <section id="cars">
-            <h2 class="section-title">Наши автомобили</h2>
+            <h2 class="section-title">
+                {% if search_query %}
+                    Результаты поиска "{{ search_query }}"
+                {% else %}
+                    Наши автомобили
+                {% endif %}
+            </h2>
             
-            <!-- Сообщение, если ничего не найдено -->
-            <div id="noResults" class="no-results">
-                К сожалению, по вашему запросу ничего не найдено.
-            </div>
-            
-            <div class="cars-grid" id="carsGrid">
+            {% if cars %}
+            <div class="cars-grid">
                 {% for car in cars %}
-                <a href="{% url 'car_detail' car.id %}" class="car-card-link" 
-                   data-brand="{{ car.brand|lower }}" 
-                   data-model="{{ car.model|lower }}" 
-                   data-search="{{ car.brand|lower }} {{ car.model|lower }} {{ car.color|lower }}">
+                <a href="{% url 'car_detail' car.id %}" class="car-card-link">
                     <div class="car-card">
                         <div class="car-image">
                             {% if car.image %}
                                 <img src="{% static car.image %}" alt="{{ car.brand }} {{ car.model }}">
                             {% else %}
-                                <!-- Заглушка, если нет изображения -->
                                 <img src="{% static 'default_car.jpg' %}" alt="{{ car.brand }} {{ car.model }}">
                             {% endif %}
                         </div>
@@ -244,13 +294,19 @@
                         </div>
                     </div>
                 </a>
-                {% empty %}
-                <div style="text-align: center; padding: 40px; color: #666;">
-                    <p>Пока нет доступных автомобилей.</p>
-                    <p>Загляните позже или свяжитесь с нами!</p>
-                </div>
                 {% endfor %}
             </div>
+            {% else %}
+            <div class="no-results">
+                {% if search_query %}
+                    <p>К сожалению, по запросу "{{ search_query }}" ничего не найдено.</p>
+                    <p>Попробуйте изменить поисковый запрос или <a href="{% url 'home' %}">посмотрите все автомобили</a>.</p>
+                {% else %}
+                    <p>Пока нет доступных автомобилей.</p>
+                    <p>Загляните позже или свяжитесь с нами!</p>
+                {% endif %}
+            </div>
+            {% endif %}
         </section>
 
         <!-- Остальные секции остаются без изменений -->
@@ -350,6 +406,7 @@
         <div class="container footer-content">
             <div class="logo">АвтоДилер</div>
             <div class="footer-links">
+                <a href="{% url 'home' %}">Главная</a>
                 <a href="#cars">Автомобили</a>
                 <a href="#dealers">Дилеры</a>
                 <a href="#clients">Клиенты</a>
@@ -362,65 +419,26 @@
     </footer>
 
     <script>
-        function searchCars() {
-            // Получаем значение из поисковой строки
-            const searchTerm = document.getElementById('carSearch').value.toLowerCase().trim();
-            const cars = document.querySelectorAll('.car-card-link');
-            const noResults = document.getElementById('noResults');
-            let visibleCount = 0;
-            
-            // Если строка поиска пустая, показываем все автомобили
-            if (searchTerm === '') {
-                cars.forEach(car => {
-                    car.style.display = 'block';
-                });
-                noResults.style.display = 'none';
-                return;
-            }
-            
-            // Ищем совпадения
-            cars.forEach(car => {
-                const searchData = car.getAttribute('data-search').toLowerCase();
-                const brand = car.getAttribute('data-brand').toLowerCase();
-                const model = car.getAttribute('data-model').toLowerCase();
-                
-                // Проверяем совпадения в разных вариантах
-                if (searchData.includes(searchTerm) || 
-                    brand.includes(searchTerm) || 
-                    model.includes(searchTerm) ||
-                    `${brand} ${model}`.includes(searchTerm)) {
-                    car.style.display = 'block';
-                    visibleCount++;
-                } else {
-                    car.style.display = 'none';
-                }
+        // Автоматическая отправка формы при нажатии на быстрые фильтры
+        document.querySelectorAll('.filter-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const searchInput = document.querySelector('.search-input');
+                searchInput.value = this.textContent;
+                searchInput.closest('form').submit();
             });
-            
-            // Показываем сообщение, если ничего не найдено
-            if (visibleCount === 0) {
-                noResults.style.display = 'block';
-            } else {
-                noResults.style.display = 'none';
-            }
-        }
-        
-        // Поиск при нажатии Enter
-        document.getElementById('carSearch').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchCars();
-            }
         });
         
-        // Автоматическая прокрутка к результатам поиска
-        document.getElementById('carSearch').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase().trim();
-            if (searchTerm.length >= 2) {
+        // Сохранение позиции при поиске
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchQuery = "{{ search_query }}";
+            if (searchQuery) {
                 setTimeout(() => {
                     document.getElementById('cars').scrollIntoView({ 
                         behavior: 'smooth',
                         block: 'start'
                     });
-                }, 300);
+                }, 100);
             }
         });
     </script>
