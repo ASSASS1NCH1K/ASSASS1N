@@ -16,16 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.views.generic import TemplateView
+from django.conf import settings
+from django.conf.urls.static import static
 from GGG_APP import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", TemplateView.as_view(template_name='1.html'), name='home'),
-    path('buy/toyota-camry/', views.toyota_camry_view, name='toyota_camry'),
-    path('buy/bmw-x5/', views.bmw_x5_view, name='bmw_x5'),
-    path('buy/mercedes-e-class/', views.mercedes_e_class_view, name='mercedes_e_class'),
-
+    path('', views.home, name='home'),
+    path('car/<int:car_id>/', views.car_detail, name='car_detail'),
 ]
 
-
+# Для обслуживания статических файлов во время разработки
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
